@@ -1,0 +1,24 @@
+{
+    "experiment_name": "baseline",
+
+    "n_train_hh": 10,
+    "n_test_hh": 1,
+    "resolution": "15min",
+    "target": "energy",
+    "prediction_length": 24,         
+    "context_length": 168,           
+
+    "type": "tft",                   
+    "batch_size": 32,
+    "seed": 42,
+    "gradient_clip_val": 0.1,
+
+    "learning_rate": 1e-03,
+    "hidden_size": 16,
+    "dropout": 0.1,
+    "hidden_continuous_size": 8,
+    
+    "epochs": 1000,
+    "log_interval": 10,
+    "n_gpus": 0
+}

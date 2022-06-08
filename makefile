@@ -9,7 +9,7 @@ setup-win: venv
 venv:
 	test -d .venv || python -m venv .venv
 
-clean:
+clean: clean-pyc
 	rm -rf .venv
 
 clean-pyc:
@@ -18,10 +18,10 @@ clean-pyc:
 	find . -name "*~" -exec rm -f {} +
 	find . -name "__pycache__" -exec rm -fr {} +
 
-test: 
-	. .venv/bin/activate && pytest --cov=src --cov-report=term-missing
-	make clean-pyc > /dev/null
+# Run pipeline
+pipeline:
+	. .venv/bin/activate && python ./src/prep/preprocess.py
 
-test-win:
-	. .venv/Scripts/activate && pytest --cov=src --cov-report=term-missing
-	make clean-pyc > /dev/null
+
+pipeline-win:
+	. .venv/Scripts/activate && python ./src/prep/preprocess.py
