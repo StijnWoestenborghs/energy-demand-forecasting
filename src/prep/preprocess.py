@@ -1,4 +1,5 @@
 import os, sys
+import shutil
 import pandas as pd
 import datetime
 import numpy as np
@@ -8,6 +9,16 @@ import torch
 from pytorch_forecasting import TimeSeriesDataSet
 from utils.plots import plot_raw_data, plot_freq_target
 pd.set_option('display.max_columns', None)
+
+
+def check_save_dir(save_dir):
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    if len(os.listdir(save_dir)) != 0:
+        proceed = input('Experiment directory not empty, continue? [y/n]: ')
+        if proceed != 'y':
+            print('Aborted')
+            sys.exit()
 
 
 def load_data(file, hh_start, hh_end, start=None, stop=None):
@@ -153,15 +164,8 @@ if __name__ == '__main__':
 
     # Define save directory
     save_dir = f"logs/{config['experiment_name']}/data"
-
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
-    if len(os.listdir(save_dir)) != 0:
-        proceed = input('Experiment directory not empty, continue? [y/n]: ')
-        if proceed != 'y':
-            print('Aborted')
-            sys.exit()
+    check_save_dir(save_dir)
+    shutil.copy("./src/config.json", f"logs/{config['experiment_name']}/")
 
     # LOAD DATA
     file = './src/data/LD2011_2014.txt'
@@ -191,8 +195,9 @@ if __name__ == '__main__':
     train_dataloader = training.to_dataloader(train=True, batch_size=config['batch_size'], num_workers=0)  # os.cpu_count()
     eval_dataloader = validation.to_dataloader(train=False, batch_size=config['batch_size'], num_workers=0)  # os.cpu_count()
     
-    # save dat & loader
+    # Save data & loader
     training.save(f'{save_dir}/training')
     validation.save(f'{save_dir}/validation')
     torch.save(train_dataloader, f'{save_dir}/train-loader.pth')
     torch.save(eval_dataloader, f'{save_dir}/eval-loader.pth')
+    data_test.to_csv(f'{save_dir}/test.csv')

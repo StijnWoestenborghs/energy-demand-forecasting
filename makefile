@@ -21,7 +21,14 @@ clean-pyc:
 # Run pipeline
 pipeline:
 	. .venv/bin/activate && python ./src/prep/preprocess.py
-
+	. .venv/bin/activate && python ./src/train/train.py
 
 pipeline-win:
 	. .venv/Scripts/activate && python ./src/prep/preprocess.py
+	. .venv/Scripts/activate && python ./src/train/train.py
+
+animation:
+	. .venv/bin/activate && python ./src/animate/animate.py
+
+animation-win:
+	. .venv/Scripts/activate && python ./src/animate/animate.py
