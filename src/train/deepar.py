@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger
-from pytorch_forecasting import Baseline, DeepAR, TimeSeriesDataSet
-
+from pytorch_forecasting import DeepAR
 pd.set_option('display.max_columns', None)
 
 

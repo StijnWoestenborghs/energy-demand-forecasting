@@ -5,9 +5,7 @@ import matplotlib.pyplot as plt
 
 from tft import make_model_tft, optimize_lr
 from deepar import make_model_deepar, deepar_plot_prediction
-from pytorch_forecasting import Baseline, TemporalFusionTransformer
-from pytorch_forecasting import Baseline, DeepAR
-
+from pytorch_forecasting import TemporalFusionTransformer, DeepAR
 
 
 def check_save_dir(save_dir):

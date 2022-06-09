@@ -2,7 +2,6 @@ import os, sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import numpy as np
 import json
 
 from pytorch_forecasting import TemporalFusionTransformer, DeepAR

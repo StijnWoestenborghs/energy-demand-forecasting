@@ -1,7 +1,6 @@
 import os, sys
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import datetime
 import seaborn as sns
 import numpy as np
@@ -65,7 +64,7 @@ def load_models(experiments):
 if __name__ == '__main__':
 
     # TEST SPECIFICATIONS
-    n_hh = 1                                        # number of households to test
+    n_hh = 1                                         # number of households to test
     EXPERIMENTS = ["baseline", "baseline_deepar"]    # experiments to test
     test_length = 7*24                               # hours
     test_horizon = 4                                 # hours
