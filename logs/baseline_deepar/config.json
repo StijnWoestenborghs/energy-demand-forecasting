@@ -1,0 +1,23 @@
+{
+    "experiment_name": "baseline_deepar",
+    "type": "deepar", 
+    
+    "n_train_hh": 10,
+    "n_test_hh": 1,
+    "resolution": "15min",
+    "target": "energy",
+    "prediction_length": 24,  
+    "context_length": 168,  
+
+    "batch_size": 32,
+    "seed": 42,
+    "gradient_clip_val": 0.1,
+
+    "hidden_size": 40,
+    "rnn_layers": 2,
+    "dropout": 0.1,
+
+    "epochs": 3,
+    "log_interval": 1,
+    "n_gpus": 0
+}
