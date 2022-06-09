@@ -2,12 +2,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from utils.rolling_plot import plot_rolling_metric
 
-def calculate_metric(data, model, test_horizon, test_length, config, type='mae', model_target=()):
+
+def calculate_metric(data, model, config, start_idx, test_length, test_horizon, update, evaluation_target, type='mae', visualize=False):
     '''
-    data, config: same input as long format from generate_time_series, only index changed to time_idx
-    test_horizon: first # hours of prediction to be evaluated
-    test_length: hours of testing
+    data: dataframe of one specific household
+    model, config: model & specs
+    test_length: number of evaluated time_idx's
+    test_horizon: evaluated horizon in time idx's
+    update: time idx step per update.
+    evaluation target: metric based on absolute or cumulative signal
     type: Metric type one of mae, mape, mase, wsnmae
     '''
 
@@ -15,41 +20,60 @@ def calculate_metric(data, model, test_horizon, test_length, config, type='mae',
     num = {'15min': 15, '30min': 30, '1hour': 60}
     prediction_length = int(config['prediction_length'] * 60 / num[config['resolution']])
     encoder_length = int(config['context_length'] * 60 / num[config['resolution']])
-    time_frames = int((test_length*60) / num[config['resolution']])
+
+    if start_idx-encoder_length < 0:
+        raise ValueError('start_idx must at least include encoder length. Increase start_idx by at least: {}'.format(abs(start_idx-encoder_length)))
+    if type not in ['mae', 'mape', 'mase', 'wsnmae']:
+        raise ValueError("type should be on of [mae, mape, mase, wsnmae]")
 
     # model target & evaluation target
-    (mt, et) = model_target
+    mt = config["target"]       # output signal of the model
+    et = evaluation_target
 
-    m_ar = np.zeros(time_frames)
-    for i in range(time_frames):
-        if type in ['mae', 'mape', 'mase', 'wsnmae']:
-            idx_available_low = data.index[data['time_idx'] == i][0]
-            idx_available_high = data.index[data['time_idx'] == encoder_length + i][0]
-            idx_target_low = data.index[data['time_idx'] == encoder_length + i][0]
-            idx_target_high = data.index[data['time_idx'] == encoder_length + i + prediction_length][0]
-            available_data = data[idx_available_low:idx_available_high]
-            target_data = data[idx_target_low:idx_target_high]
+    m_ar, time_store, pred_store = [], [], []
 
-            test_prediction, test_x = model.predict(pd.concat([available_data, target_data], ignore_index=True),
-                                                    return_x=True)
+    for i in range(start_idx, start_idx+test_length, update):
 
-            actual = np.array(target_data[config['target']])
-            prediction = np.array(test_prediction[0])
+        # update prediction
+        time, actual, prediction = predict(i, data, model, encoder_length, prediction_length, mt)
 
-            # only evaluate test horizon
-            a = actual[0:int((test_horizon*60)/(num[config['resolution']]))]
-            p = prediction[0:int((test_horizon*60)/(num[config['resolution']]))]
-            idx = target_data.index[0:int((test_horizon*60)/(num[config['resolution']]))]
+        # only evaluate test horizon
+        t, a, p = time[:test_horizon], actual[:test_horizon], prediction[:test_horizon]
+        
+        # preprocess to evaluation target
+        a, p = prep_eval_target(a, p, mt, et)
 
-            # preprocess to evaluation target
-            a, p = prep_eval_target(a, p, idx, mt, et)
+        # calculate chosen metric
+        m = choose_metric(a, p, type)
 
-            # calculate chosen metric
-            m = choose_metric(a, p, type)
-        else:
-            raise NotImplementedError
-        m_ar[i] = m
+        m_ar += [m]
+        time_store += [t]
+        pred_store += [p]
+
+    if visualize:
+        # always plot in function of evaluation target (also pred_store in fucntion of et)
+        plot_rolling_metric(data[et], config, start_idx, test_length, test_horizon, time_store, pred_store, title=f'Rolling MAE: {np.mean(m_ar)} L')
+    
     return np.mean(m_ar)
+
+
+def predict(i, data, model, encoder_length, prediction_length, mt):
+    idx_available_low = data.index[data['time_idx'] == i - encoder_length][0]
+    idx_available_high = data.index[data['time_idx'] == i][0]
+    idx_target_low = data.index[data['time_idx'] == i][0]
+    idx_target_high = data.index[data['time_idx'] == i + prediction_length][0]
+
+    available_data = data[idx_available_low:idx_available_high]
+    target_data = data[idx_target_low:idx_target_high]
+
+    test_prediction, test_x = model.predict(pd.concat([available_data, target_data], ignore_index=True),
+                                        return_x=True)
+
+    time = np.array(data[idx_target_low:idx_target_high].index)
+    actual = np.array(target_data[mt])                  # compare predictions with model target (mt)
+    prediction = np.array(test_prediction[0])
+
+    return time, actual, prediction
 
 
 def choose_metric(a, p, type):
@@ -96,22 +120,18 @@ def cumsum_to_abs(signal):
     return out
 
 
-def prep_eval_target(a, p, idx, mt, et):
-    # if mt == 'energy' and et == 'cumulative_energy':
-    #     # split on mn
-    #     mn = np.where(idx % 96 == 0)
-    #     if len(mn[0]) != 0:
-    #         a1 = pd.Series(a[0:int(mn[0])]).cumsum()
-    #         a2 = pd.Series(a[int(mn[0]):]).cumsum()
-    #         p1 = pd.Series(p[0:int(mn[0])]).cumsum()
-    #         p2 = pd.Series(p[int(mn[0]):]).cumsum()
-    #         a = np.append(np.array(a1), np.array(a2))
-    #         p = np.append(np.array(p1), np.array(p2))
-    #     else:
-    #         a = np.array(pd.Series(a, index=idx).cumsum())
-    #         p = np.array(pd.Series(p, index=idx).cumsum())
+def abs_to_cumsum(signal):
+    # TODO
+    raise NotImplementedError
+
+
+def prep_eval_target(a, p, mt, et):
+    if mt == 'energy' and et == 'cumulative_energy':
+        # convert model output to cumulative
+        a = abs_to_cumsum(a)
+        p = abs_to_cumsum(p)
     if mt == 'cumulative_energy' and et == 'energy':
-        # convert mt to absolute
+        # convert model output to absolute
         a = cumsum_to_abs(a)
         p = cumsum_to_abs(p)
     return a, p

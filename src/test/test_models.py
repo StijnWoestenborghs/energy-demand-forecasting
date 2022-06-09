@@ -66,8 +66,12 @@ if __name__ == '__main__':
     # TEST SPECIFICATIONS
     n_hh = 1                                         # number of households to test
     EXPERIMENTS = ["baseline", "baseline_deepar"]    # experiments to test
-    test_length = 7*24                               # hours
-    test_horizon = 4                                 # hours
+    test_length_hours = 7*24                         # hours
+    test_horizon_hours = 4                           # hours
+    update_hours = 1                                 # hours
+    evaluation_target = "energy"
+
+    VIZUALIZE_TESTS = True
 
     # LOAD SPECIFIC TEST DATA PERIOD
     file = './src/data/LD2011_2014.txt'
@@ -89,13 +93,25 @@ if __name__ == '__main__':
             data_hh = generate_time_series(data_test.iloc[:, h:h+1], resolution=config['resolution'])
             data_hh.index = data_hh['time_idx']
 
+            num = {'15min': 15, '30min': 30, '1hour': 60}
+            max_prediction_length = int(config['prediction_length'] * 60 / num[config['resolution']])
+            max_encoder_length = int(config['context_length'] * 60 / num[config['resolution']])
+
+            start_idx = max_encoder_length
+            test_length = test_length_hours * int(60 / num[config['resolution']])
+            test_horizon = test_horizon_hours * int(60 / num[config['resolution']])
+            update = update_hours * int(60 / num[config['resolution']])
+
             MAE = calculate_metric(data=data_hh,
-                                    model=model,
-                                    test_horizon=test_horizon,
-                                    test_length=test_length,
-                                    config=config,
-                                    type='mae',
-                                    model_target=('energy', 'energy'))
+                                   model=model,
+                                   config=config,
+                                   start_idx=start_idx,
+                                   test_length=test_length,
+                                   test_horizon=test_horizon,
+                                   update=update,
+                                   evaluation_target=evaluation_target,
+                                   type='mae',
+                                   visualize=VIZUALIZE_TESTS)
 
             MAE_household[h][i] = MAE
 
