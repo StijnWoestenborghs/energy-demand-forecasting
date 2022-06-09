@@ -1,3 +1,4 @@
+# Initiate environment setup
 setup: venv
 	. .venv/bin/activate && python -m pip install --upgrade pip
 	. .venv/bin/activate && pip install -r requirements_dev.txt
@@ -27,6 +28,15 @@ pipeline-win:
 	. .venv/Scripts/activate && python ./src/prep/preprocess.py
 	. .venv/Scripts/activate && python ./src/train/train.py
 
+# Make test
+test:
+	. .venv/Scripts/activate && python ./src/test/test_models.py
+
+test-win:
+	. .venv/Scripts/activate && python ./src/test/test_models.py
+
+
+# Make animations
 animation:
 	. .venv/bin/activate && python ./src/animate/animate.py
 
