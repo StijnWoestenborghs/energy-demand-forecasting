@@ -19,16 +19,21 @@ clean-pyc:
 	find . -name "*~" -exec rm -f {} +
 	find . -name "__pycache__" -exec rm -fr {} +
 
-# Run pipeline
-pipeline:
+# Stage preprocess
+preprocess:
 	. .venv/bin/activate && python ./src/prep/preprocess.py
+
+preprocess-win:
+	. .venv/Scripts/activate && python ./src/prep/preprocess.py
+
+# Stage train
+preprocess:
 	. .venv/bin/activate && python ./src/train/train.py
 
-pipeline-win:
-	. .venv/Scripts/activate && python ./src/prep/preprocess.py
+preprocess-win:
 	. .venv/Scripts/activate && python ./src/train/train.py
 
-# Make test
+# Stage test
 test:
 	. .venv/Scripts/activate && python ./src/test/test_models.py
 
@@ -36,9 +41,9 @@ test-win:
 	. .venv/Scripts/activate && python ./src/test/test_models.py
 
 
-# Make animations
-animation:
+# Stage animate
+animate:
 	. .venv/bin/activate && python ./src/animate/animate.py
 
-animation-win:
+animate-win:
 	. .venv/Scripts/activate && python ./src/animate/animate.py
