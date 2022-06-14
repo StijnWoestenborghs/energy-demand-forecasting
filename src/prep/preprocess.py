@@ -200,4 +200,3 @@ if __name__ == '__main__':
     validation.save(f'{save_dir}/validation')
     torch.save(train_dataloader, f'{save_dir}/train-loader.pth')
     torch.save(eval_dataloader, f'{save_dir}/eval-loader.pth')
-    data_test.to_csv(f'{save_dir}/test.csv')

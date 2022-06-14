@@ -14,3 +14,5 @@ Then 'make setup'
 
 
 if you want to make an animation: make sure to install ffmpeg on your OS
+
+'brew install ffmpeg'
