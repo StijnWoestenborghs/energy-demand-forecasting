@@ -27,10 +27,10 @@ preprocess-win:
 	. .venv/Scripts/activate && python ./src/prep/preprocess.py
 
 # Stage train
-preprocess:
+train:
 	. .venv/bin/activate && python ./src/train/train.py
 
-preprocess-win:
+train-win:
 	. .venv/Scripts/activate && python ./src/train/train.py
 
 # Stage test
