@@ -31,10 +31,10 @@ Training is done in stages initiated by a configuration file `src/config.json`. 
 
 1. **Preprocess**
 
-> Make sure you have setup the right setting in the configuration file.
+> Make sure you have configured the right settings in the configuration file.
 >
-> - MacOS: `make setup`
-> - Windows: `make setup-win`
+> - MacOS: `make preprocess`
+> - Windows: `make preprocess-win`
 
 2. **Train and validate**
 
