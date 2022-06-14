@@ -1,4 +1,3 @@
-
 # Time Series Forecasting
 
 ## Project setup
@@ -6,16 +5,16 @@
 ### Prerequisite
 
 1. Python versions and virtual environments are controlled with (the very convenient) [pyenv](https://github.com/pyenv/pyenv). Pyenv installation depends on the OS used:
-- MacOS: 
-    `brew update`
-    `brew install pyenv`
-- Windows:
-    follow [pyenv-win](https://github.com/pyenv-win/pyenv-win)
+> - MacOS: 
+>    `brew update`
+>    `brew install pyenv`
+> - Windows:
+>    follow [pyenv-win](https://github.com/pyenv-win/pyenv-win)
 
 2. All the necessary data for this project has been added in git via [Git Large File Storage](https://git-lfs.github.com/). After cloning the project, make sure to first unpack that data: 
-
-    `git lfs install`
-    `git lfs pull`  (will download c.a. 720 MB)
+>
+>    `git lfs install`
+>    `git lfs pull`  (will download c.a. 720 MB)
 
 ### Configure project setup
 
@@ -32,29 +31,29 @@ Training is done in stages initiated by a configuration file `src/config.json`. 
 
 1. **Preprocess**
 
-$\qquad$ Make sure you have setup the right setting in the configuration file.
+> Make sure you have setup the right setting in the configuration file.
+>
+> - MacOS: `make setup`
+> - Windows: `make setup-win`
 
-- MacOS: `make setup`
-- Windows: `make setup-win`
+2. **Train and validate**
 
-2. **Train (and validate)**
-
-- MacOS: `make train`
-- Windows: `make train-win`
-
-$\qquad$ Track all your experiments with **tensorboard**! In a new shell run: `tensorboard --logdir=logs`
+> - MacOS: `make train`
+> - Windows: `make train-win`
+>
+> Track all your experiments with **tensorboard**! In a new shell run: `tensorboard --logdir=logs`
 
 3. **Test**
 
-$\qquad$ The test stage compares different experiments on the test set with a *custom rolling metric*.
-$\qquad$ The exact test you want to run should be configured inside: `src/test/test_models.py`
-
-- MacOS: `make test`
-- Windows: `make test-win`
+> The test stage compares different experiments on the test set with a *custom rolling metric*.
+> The exact test you want to run should be configured inside: `src/test/test_models.py`
+>
+> - MacOS: `make test`
+> - Windows: `make test-win`
 
 4. **(optional) Animate**
 
-- MacOS: `make setup`
-- Windows: `make setup-win`
-
-$\qquad$ *Note: Requires to have ffmpeg installed on your OS (MacOS: `brew install ffmpeg`)*
+> - MacOS: `make setup`
+> - Windows: `make setup-win`
+>
+> *Note: Requires to have ffmpeg installed on your OS (MacOS: `brew install ffmpeg`)*
