@@ -1,4 +1,13 @@
 
+FIRST:
+
+'git lfs install'
+
+'git lfs pull' (download 720 MB)
+
+Then 'make setup'
+
+
 `make pipeline`
 
 `tensorboard --logdir=logs`
