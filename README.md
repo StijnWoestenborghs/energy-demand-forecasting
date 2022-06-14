@@ -53,7 +53,7 @@ Training is done in stages initiated by a configuration file `src/config.json`. 
 
 4. **(optional) Animate**
 
-> - MacOS: `make setup`
-> - Windows: `make setup-win`
+> - MacOS: `make animate`
+> - Windows: `make animate-win`
 >
 > *Note: Requires to have ffmpeg installed on your OS (MacOS: `brew install ffmpeg`)*
