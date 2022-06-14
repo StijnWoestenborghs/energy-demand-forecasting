@@ -35,7 +35,7 @@ train-win:
 
 # Stage test
 test:
-	. .venv/Scripts/activate && python ./src/test/test_models.py
+	. .venv/bin/activate && python ./src/test/test_models.py
 
 test-win:
 	. .venv/Scripts/activate && python ./src/test/test_models.py
